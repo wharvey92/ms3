@@ -32,9 +32,9 @@ class Receiver:
         Returns representative sample values for bit 0, 1 and the threshold.
         Use kmeans clustering with the demodulated samples
         '''
-        clusters, centroids = self.kmeans_clustering(demod_samples, 2)
-        one = max(centroids)
-        zero = min(centroids)
+        centroids = scipy.cluster.vq.kmeans(demod_samples, 2)
+        one = max(centroids[0])
+        zero = min(centroids[0])
         thresh = 1.0 * (one + zero) / 2
         thresh = (one + zero) * 1.0 / 2
         return one, zero, thresh
@@ -54,9 +54,14 @@ class Receiver:
         while(True):
             currSamples = demod_samples[energy_offset: energy_offset + self.spb]
 
+            #print "currsamples - detect_preamble", currSamples
+
             middleIndex = self.spb / 2
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
+
+            #print "samplesToAvg - detect_preamble", samplesToAvg
+
             avg = np.average(samplesToAvg)
 
             if len(samplesToAvg) == 0:
@@ -103,6 +108,9 @@ class Receiver:
         
 
     def kmeans_clustering(self, samples, numClusters):
+
+
+
 
         clusterInd = random.sample(range(len(samples)), numClusters)
         centroids = [samples[i] for i in clusterInd]
@@ -186,10 +194,18 @@ class Receiver:
         print "offset initially is", offset
 
         while (True):
+
+            print "offset - demap_and_check", offset
+            print "lenofsamples - demap_and_check", len(demod_samples)
+
             currSamples = demod_samples[offset: offset + self.spb]
             middleIndex = self.spb / 2
+            print "currsamples - demap and check", currSamples
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
+
+            print "samplesToAvg - demap and check", samplesToAvg
+
 
             # print "while ", samplesToAvg
             # print
@@ -219,8 +235,9 @@ class Receiver:
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
-        demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
-        
+        demodulated_samples = [(samples[i] * math.exp(1j * 2 * math.pi * i * self.fc/self.samplerate)) for i in xrange(len(samples))]
+
+        #demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         cut_off = math.pi * self.fc / self.samplerate
 
 
