@@ -41,7 +41,14 @@ class Transmitter:
         Sample values for bit '1', '0' should be [one], 0 respectively.
         Output should be an array of samples.
         '''
-        samples = [self.one if (x == 1) else 0 for x in databits_with_preamble]
+        samples = np.array([])
+        for x in databits_with_preamble:
+            toAdd = self.one
+            if x == 0:
+                toAdd = 0
+            for i in xrange(self.spb):
+                samples = np.append(samples, toAdd)
+
         return samples
         
     def modulate(self, samples):

@@ -53,13 +53,19 @@ class Receiver:
         energy_offset = 0
         while(True):
             currSamples = demod_samples[energy_offset: energy_offset + self.spb]
+
             middleIndex = self.spb / 2
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
             avg = np.average(samplesToAvg)
+
+            if len(samplesToAvg) == 0:
+                exit("this error")
+
+
             if (avg > ((one + thresh) / 2)):
                 break
-            energy_offset += self.spb
+            energy_offset += 1
 
 
         # Find the sample corresp. to the first reliable bit "1"; this step 
@@ -146,7 +152,7 @@ class Receiver:
 
         data_bits = []
         offset = barker_start
-        thresh = detect_threshold(demod_samples)
+        thresh = self.detect_threshold(demod_samples)
         preambleOneVolts = []
         preambleZeroVolts = []
 
@@ -156,8 +162,11 @@ class Receiver:
             middleIndex = self.spb / 2
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
+
+            print "for ", samplesToAvg
+            print
+
             avg = np.average(samplesToAvg)
-            preampleVoltVals.append(avg)
             if (preambleBits[i] == 1):
                 preambleOneVolts.append(avg)
             else:
@@ -174,13 +183,18 @@ class Receiver:
         thresh = (one + zero) / 2
         offset = barker_start
 
-
+        print "offset initially is", offset
 
         while (True):
             currSamples = demod_samples[offset: offset + self.spb]
             middleIndex = self.spb / 2
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
+
+            # print "while ", samplesToAvg
+            # print
+
+
             avg = np.average(samplesToAvg)
             if (avg > thresh):
                 data_bits.append(1)
@@ -189,6 +203,8 @@ class Receiver:
             if (offset + self.spb > len(demod_samples)):
                 break
 
+            offset += self.spb
+        print "data_bits", data_bits
         if (data_bits[0] != preambleBits[0] or data_bits[1] != preambleBits[1] or data_bits[2] != preambleBits[2]):
             exit("PREAMBLE MISMATCH")
 
@@ -197,7 +213,6 @@ class Receiver:
 
 
         # Fill in your implementation
-        pass
 
     def demodulate(self, samples):
         '''

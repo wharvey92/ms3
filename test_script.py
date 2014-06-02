@@ -1,16 +1,17 @@
-from common_txrx import getlpfilter_vector, perform_convolution
 import numpy as np
-from reciever import Receiver
 
 
+one = 4
+spb = 3
 
-x = np.array([1, 2, 4, 5, 6, 7, 8])
-h = getlpfilter_vector(0.5)
-print x
-print h
+databits_with_preamble = [1, 0, 0, 0, 0, 1, 1, 1]
 
-print 
-print 
-print
+samples = np.array([])
+for x in databits_with_preamble:
+	toAdd = one
+	if x == 0:
+		toAdd = 0
+	for i in xrange(spb):
+		samples = np.append(samples, toAdd)
 
-print perform_convolution(x, h)
+print samples
