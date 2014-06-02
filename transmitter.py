@@ -1,6 +1,6 @@
 import math
 import common_txrx as common
-import numpy
+import numpy as np
 
 import hamming_db
 import channel_coding as cc
@@ -23,9 +23,15 @@ class Transmitter:
         The output should be the concatenation of arrays of
             [silence bits], [preamble bits], and [databits]
         '''
+
+        zeroBits = np.zeros(self.silence)
+        preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
+        preambleBits = np.array(preambleBits)
+        databits_with_preamble = np.append(zeroBits, preambleBits, databits)
+
         # fill in your implementation
 
-        print '\tSent Preamble: ', # fill in here
+        print '\tSent Preamble: ', databits_with_preamble # fill in here
         return databits_with_preamble
 
     def bits_to_samples(self, databits_with_preamble):
@@ -43,6 +49,8 @@ class Transmitter:
         Multiply samples by a local sinusoid carrier of the same length.
         Return the multiplied result.
         '''
+
+        
         # fill in your implementation
         print '\tNumber of samples being sent:', # fill in here
 
