@@ -142,6 +142,59 @@ class Receiver:
            terminate the program. 
         Output is the array of data_bits (bits without preamble)
         '''
+        preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
+
+        data_bits = []
+        offset = barker_start
+        thresh = detect_threshold(demod_samples)
+        preambleOneVolts = []
+        preambleZeroVolts = []
+
+        preambleGuessese = []
+        for i in range(len(preambleBits)):
+            currSamples = demod_samples[offset: offset + self.spb]
+            middleIndex = self.spb / 2
+            samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
+            samplesToAvg = np.array(samplesToAvg)
+            avg = np.average(samplesToAvg)
+            preampleVoltVals.append(avg)
+            if (preambleBits[i] == 1):
+                preambleOneVolts.append(avg)
+            else:
+                preambleZeroVolts.append(avg)
+            offset += self.spb
+            
+
+        preambleOneVolts = np.array(preambleOneVolts)
+        preambleZeroVolts = np.array(preambleZeroVolts)
+
+        one = np.average(preambleOneVolts)
+        zero = np.average(preambleZeroVolts)
+
+        thresh = (one + zero) / 2
+        offset = barker_start
+
+
+
+        while (True):
+            currSamples = demod_samples[offset: offset + self.spb]
+            middleIndex = self.spb / 2
+            samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
+            samplesToAvg = np.array(samplesToAvg)
+            avg = np.average(samplesToAvg)
+            if (avg > thresh):
+                data_bits.append(1)
+            else:
+                data_bits.append(0)
+            if (offset + self.spb > len(demod_samples)):
+                break
+
+        if (data_bits[0] != preambleBits[0] or data_bits[1] != preambleBits[1] or data_bits[2] != preambleBits[2]):
+            exit("PREAMBLE MISMATCH")
+
+        return data_bits[len(preambleBits):]
+
+
 
         # Fill in your implementation
         pass
