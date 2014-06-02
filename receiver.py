@@ -5,7 +5,10 @@ import matplotlib.pyplot as p
 import scipy.cluster.vq
 import common_txrx as common
 from graphs import *
+import random
 from numpy import linalg as LA
+from operator import itemgetter
+
 
 import hamming_db
 import channel_coding as cc
@@ -69,12 +72,46 @@ class Receiver:
 
         return offset + pre_offset
         
+
+    def kmeans_clustering(samples, numClusters):
+
+        clusterInd = random.sample(range(len(samples)), numClusters)
+        centroids = [samples[i] for i in clusterInd]
+        clusters = [None] * len(samples)
+        while(True):
+
+            stopRun = True
+
+            #Assign points to centroids
+            for i in range(len(samples)):
+                currSamp = samples[i]
+                centroidDists = [abs(centroids[j] - currSamp) for j in range(len(centroids))]
+                closestCentroid = min(enumerate(centroidDists), key=itemgetter(1))[0]
+                if (clusters[i] != closestCentroid):
+                    stopRun = False
+                clusters[i] = closestCentroid
+            #Recompute custers
+            for i in range(len(centroids)):
+                totalVal = 0
+                totalNum = 0
+                for j in range(len(clusters)):
+                    if (clusters[j] == i):
+                        totalVal += samples[j]
+                        totalNum += 1
+                totalVal = totalVal / (1.0 * totalNum)
+                centroids[i] = totalVal
+            if (stopRun):
+                return clusters
+
+
+    
+
     def demap_and_check(self, demod_samples, barker_start):
         '''
         Demap the demod_samples (starting from [preamble_start]) into bits.
         1. Calculate the average values of midpoints of each [spb] samples
            and match it with the known preamble bit values.
-        2. Use the average values and bit values of the preamble samples from (1)
+        2. Use the average values and bit val[None] * len(samples) of the preamble samples from (1)
            to calculate the new [thresh], [one], [zero]
         3. Demap the average values from (1) with the new three values from (2)
         4. Check whether the first [preamble_length] bits of (3) are equal to
@@ -91,6 +128,8 @@ class Receiver:
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
+
+        
         # fill in your implementation
         return demod_samples
 

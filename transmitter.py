@@ -50,11 +50,16 @@ class Transmitter:
         Return the multiplied result.
         '''
 
+        print samples
+
+
         
         # fill in your implementation
         print '\tNumber of samples being sent:', # fill in here
 
         return mod_samples
+
+
         
     def encode(self, databits, cc_len):
         '''
