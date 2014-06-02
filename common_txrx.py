@@ -5,6 +5,9 @@ import operator
 import binascii
 # Methods common to both the transmitter and receiver.
 
+
+
+
 def lpfilter(samples_in, omega_cut):
     '''
     A low-pass filter of frequency omega_cut.
