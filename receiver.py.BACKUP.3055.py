@@ -36,7 +36,11 @@ class Receiver:
         one = max(centroids)
         zero = min(centroids)
         thresh = 1.0 * (one + zero) / 2
+<<<<<<< Updated upstream
         thresh = (one + zero) * 1.0 / 2
+        
+=======
+>>>>>>> Stashed changes
         return one, zero, thresh
  
     def detect_preamble(self, demod_samples, thresh, one):
@@ -62,6 +66,10 @@ class Receiver:
             energy_offset += 1
 
 
+
+
+        # Fill in your implementation of the high-energy check procedure
+
         # Find the sample corresp. to the first reliable bit "1"; this step 
         # is crucial to a proper and correct synchronization w/ the xmitter.
         offset =  energy_offset
@@ -76,9 +84,12 @@ class Receiver:
         the cross-correlation between the signal samples and the preamble 
         samples is the highest. 
         '''
+<<<<<<< Updated upstream
 
         
         
+        # Fill in your implementation of the cross-correlation check procedure
+=======
         preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
         energy_samples = samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
         max_idx = 0
@@ -89,6 +100,7 @@ class Receiver:
                 max_val = corr_val
                 max_idx = i
         pre_offset = max_idx
+>>>>>>> Stashed changes
 
         '''
         [pre_offset] is the additional amount of offset starting from [offset],

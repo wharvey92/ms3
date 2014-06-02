@@ -36,7 +36,7 @@ class Receiver:
         one = max(centroids)
         zero = min(centroids)
         thresh = 1.0 * (one + zero) / 2
-        thresh = (one + zero) * 1.0 / 2
+        
         return one, zero, thresh
  
     def detect_preamble(self, demod_samples, thresh, one):
@@ -49,22 +49,11 @@ class Receiver:
         First, find the first sample index where you detect energy based on the
         moving average method described in the milestone 2 description.
         '''
-
-        energy_offset = 0
-        while(True):
-            currSamples = demod_samples[energy_offset: energy_offset + self.spb]
-            middleIndex = self.spb / 2
-            samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
-            samplesToAvg = np.array(samplesToAvg)
-            avg = np.average(samplesToAvg)
-            if (avg > ((one + thresh) / 2)):
-                break
-            energy_offset += 1
-
+        # Fill in your implementation of the high-energy check procedure
 
         # Find the sample corresp. to the first reliable bit "1"; this step 
         # is crucial to a proper and correct synchronization w/ the xmitter.
-        offset =  energy_offset
+        offset =  # fill in the result of the high-energy check
         if offset < 0:
             print '*** ERROR: Could not detect any ones (so no preamble). ***'
             print '\tIncrease volume / turn on mic?'
@@ -76,19 +65,7 @@ class Receiver:
         the cross-correlation between the signal samples and the preamble 
         samples is the highest. 
         '''
-
-        
-        
-        preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
-        energy_samples = samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
-        max_idx = 0
-        max_val = 0
-        for i in xrange(len(energy_samples - len(preambleBits) - 1)):
-            corr_val = np.correlate(preambleBits, energy_samples[i:i+len(preambleBits)])
-            if corr_val > max_val:
-                max_val = corr_val
-                max_idx = i
-        pre_offset = max_idx
+        # Fill in your implementation of the cross-correlation check procedure
 
         '''
         [pre_offset] is the additional amount of offset starting from [offset],
@@ -156,6 +133,9 @@ class Receiver:
         '''
         demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         
+        # fill in your implementation
+        print '\tNumber of samples being sent:', len(demodulated_samples)
+
         cut_off = math.pi * self.fc / self.samplerate
         return common.lpfilter(demodulated_samples, cutoff)
 
