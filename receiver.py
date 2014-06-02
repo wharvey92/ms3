@@ -59,7 +59,7 @@ class Receiver:
             avg = np.average(samplesToAvg)
             if (avg > ((one + thresh) / 2)):
                 break
-            energy_offset += 1
+            energy_offset += self.spb
 
 
         # Find the sample corresp. to the first reliable bit "1"; this step 
