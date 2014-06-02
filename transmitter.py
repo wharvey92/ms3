@@ -58,7 +58,8 @@ class Transmitter:
         # fill in your implementation
         print '\tNumber of samples being sent:', len(modulated_samples)
 
-        return common.lpfilter(modulated_samples, self.fc)
+        cut_off = 4 * math.pi * self.fc / self.samplerate
+        return common.lpfilter(modulated_samples, cutoff)
 
 
         
