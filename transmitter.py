@@ -34,7 +34,7 @@ class Transmitter:
         Sample values for bit '1', '0' should be [one], 0 respectively.
         Output should be an array of samples.
         '''
-        # fill in your implemenation
+        samples = [self.one if (x == 1) else 0 for x in databits_with_preamble]
 
         return samples
         
