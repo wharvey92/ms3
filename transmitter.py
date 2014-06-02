@@ -50,10 +50,6 @@ class Transmitter:
         '''
         #Get modulated samples
         modulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
-
-        print samples
-
-
         
         # fill in your implementation
         print '\tNumber of samples being sent:', len(modulated_samples)
