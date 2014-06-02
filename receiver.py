@@ -101,7 +101,7 @@ class Receiver:
                 totalVal = totalVal / (1.0 * totalNum)
                 centroids[i] = totalVal
             if (stopRun):
-                return clusters
+                return clusters, centroids
 
 
     
@@ -129,7 +129,9 @@ class Receiver:
         Return the demodulated samples.
         '''
 
-        
+
+
+
         # fill in your implementation
         return demod_samples
 
