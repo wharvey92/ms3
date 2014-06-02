@@ -32,7 +32,10 @@ class Receiver:
         Returns representative sample values for bit 0, 1 and the threshold.
         Use kmeans clustering with the demodulated samples
         '''
-        centroids = scipy.cluster.vq.kmeans(demod_samples, 2)
+
+        return 1, 0, 0.5
+
+        centroids = scipy.cluster.vq.kmeans(np.array(demod_samples), 2)
         one = max(centroids[0])
         zero = min(centroids[0])
         thresh = 1.0 * (one + zero) / 2
@@ -49,6 +52,8 @@ class Receiver:
         First, find the first sample index where you detect energy based on the
         moving average method described in the milestone 2 description.
         '''
+        #testing remove
+        return 51200
 
         energy_offset = 0
         while(True):
@@ -109,9 +114,6 @@ class Receiver:
 
     def kmeans_clustering(self, samples, numClusters):
 
-
-
-
         clusterInd = random.sample(range(len(samples)), numClusters)
         centroids = [samples[i] for i in clusterInd]
         clusters = [None] * len(samples)
@@ -160,19 +162,16 @@ class Receiver:
 
         data_bits = []
         offset = barker_start
-        thresh = self.detect_threshold(demod_samples)
         preambleOneVolts = []
         preambleZeroVolts = []
 
         preambleGuessese = []
+
         for i in range(len(preambleBits)):
             currSamples = demod_samples[offset: offset + self.spb]
             middleIndex = self.spb / 2
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
-
-            print "for ", samplesToAvg
-            print
 
             avg = np.average(samplesToAvg)
             if (preambleBits[i] == 1):
@@ -181,7 +180,6 @@ class Receiver:
                 preambleZeroVolts.append(avg)
             offset += self.spb
             
-
         preambleOneVolts = np.array(preambleOneVolts)
         preambleZeroVolts = np.array(preambleZeroVolts)
 
@@ -189,44 +187,31 @@ class Receiver:
         zero = np.average(preambleZeroVolts)
 
         thresh = (one + zero) / 2
-        offset = barker_start
 
-        print "offset initially is", offset
+        offset = barker_start
 
         while (True):
 
-            print "offset - demap_and_check", offset
-            print "lenofsamples - demap_and_check", len(demod_samples)
-
             currSamples = demod_samples[offset: offset + self.spb]
             middleIndex = self.spb / 2
-            print "currsamples - demap and check", currSamples
+
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
-
-            print "samplesToAvg - demap and check", samplesToAvg
-
-
-            # print "while ", samplesToAvg
-            # print
-
 
             avg = np.average(samplesToAvg)
             if (avg > thresh):
                 data_bits.append(1)
             else:
                 data_bits.append(0)
-            if (offset + self.spb > len(demod_samples)):
+            if (offset + self.spb >= len(demod_samples)):
                 break
 
             offset += self.spb
-        print "data_bits", data_bits
+
         if (data_bits[0] != preambleBits[0] or data_bits[1] != preambleBits[1] or data_bits[2] != preambleBits[2]):
             exit("PREAMBLE MISMATCH")
 
         return data_bits[len(preambleBits):]
-
-
 
         # Fill in your implementation
 
@@ -235,6 +220,8 @@ class Receiver:
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
+        exit("demodulating !!!")
+
         demodulated_samples = [(samples[i] * math.exp(1j * 2 * math.pi * i * self.fc/self.samplerate)) for i in xrange(len(samples))]
 
         #demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]

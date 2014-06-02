@@ -56,6 +56,9 @@ class Transmitter:
         Multiply samples by a local sinusoid carrier of the same length.
         Return the multiplied result.
         '''
+
+        exit("modulating!!!")
+
         #Get modulated samples
         modulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         

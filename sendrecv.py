@@ -121,7 +121,7 @@ if __name__ == '__main__':
         databits = xmitter.encode(databits, opt.cc_len)
     databits_with_preamble = xmitter.add_preamble(databits)
     samples = xmitter.bits_to_samples(databits_with_preamble)
-    mod_samples = xmitter.modulate(samples)
+    mod_samples = samples#xmitter.modulate(samples)
 
 ####################################    
     # create channel instance
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     # process the received samples
     # make receiver
     r = Receiver(fc, opt.samplerate, opt.spb)
-    demod_samples = r.demodulate(samples_rx)
+    demod_samples = samples#samples_rx#r.demodulate(samples_rx)
 
     one, zero, thresh = r.detect_threshold(demod_samples)
     barker_start = r.detect_preamble(demod_samples, thresh, one)
