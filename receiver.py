@@ -75,10 +75,7 @@ class Receiver:
         Then, starting from the demod_samples[offset], find the sample index where
         the cross-correlation between the signal samples and the preamble 
         samples is the highest. 
-        '''
-
-        
-        
+        '''        
         preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
         energy_samples = samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
         max_idx = 0
