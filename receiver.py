@@ -32,12 +32,12 @@ class Receiver:
         Returns representative sample values for bit 0, 1 and the threshold.
         Use kmeans clustering with the demodulated samples
         '''
-
         clusters, centroids = kmeans_clustering(demod_samples, 2)
         one = max(centroids)
         zero = min(centroids)
+        thresh = 1.0 * (one + zero) / 2
         thresh = (one + zero) * 1.0 / 2
-
+        
         return one, zero, thresh
  
     def detect_preamble(self, demod_samples, thresh, one):
@@ -150,12 +150,13 @@ class Receiver:
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
-
-
-
-
+        demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
+        
         # fill in your implementation
-        return demod_samples
+        print '\tNumber of samples being sent:', len(demodulated_samples)
+
+        cut_off = math.pi * self.fc / self.samplerate
+        return common.lpfilter(demodulated_samples, cutoff)
 
     def decode(self, recd_bits):
         return cc.get_databits(recd_bits)
