@@ -1,6 +1,6 @@
 import sys
 import math
-import numpy
+import numpy as np
 import matplotlib.pyplot as p
 import scipy.cluster.vq
 import common_txrx as common
@@ -32,7 +32,7 @@ class Receiver:
         Returns representative sample values for bit 0, 1 and the threshold.
         Use kmeans clustering with the demodulated samples
         '''
-        clusters, centroids = kmeans_clustering(demod_samples, 2)
+        clusters, centroids = self.kmeans_clustering(demod_samples, 2)
         one = max(centroids)
         zero = min(centroids)
         thresh = 1.0 * (one + zero) / 2
@@ -77,13 +77,13 @@ class Receiver:
         samples is the highest. 
         '''        
         preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
-        energy_samples = samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
+        energy_samples = demod_samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
         max_idx = 0
         max_val = 0
         for i in xrange(len(energy_samples - len(preambleBits) - 1)):
             corr_val = np.correlate(preambleBits, energy_samples[i:i+len(preambleBits)])
-            if corr_val > max_val:
-                max_val = corr_val
+            if corr_val[0] > max_val:
+                max_val = corr_val[0]
                 max_idx = i
         pre_offset = max_idx
 
@@ -96,7 +96,7 @@ class Receiver:
         return offset + pre_offset
         
 
-    def kmeans_clustering(samples, numClusters):
+    def kmeans_clustering(self, samples, numClusters):
 
         clusterInd = random.sample(range(len(samples)), numClusters)
         centroids = [samples[i] for i in clusterInd]
@@ -207,7 +207,10 @@ class Receiver:
         demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         
         cut_off = math.pi * self.fc / self.samplerate
-        return common.lpfilter(demodulated_samples, cutoff)
+
+
+
+        return common.lpfilter(demodulated_samples, cut_off)
 
     def decode(self, recd_bits):
         return cc.get_databits(recd_bits)

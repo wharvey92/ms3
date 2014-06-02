@@ -27,11 +27,12 @@ class Transmitter:
         zeroBits = np.zeros(self.silence)
         preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
         preambleBits = np.array(preambleBits)
-        databits_with_preamble = np.append(zeroBits, preambleBits, databits)
+        databits_with_preamble = np.append(zeroBits, preambleBits)
+        databits_with_preamble = np.append(databits_with_preamble, databits)
 
         # fill in your implementation
 
-        print '\tSent Preamble: ', databits_with_preamble # fill in here
+        print '\tSent Preamble: ', preambleBits # fill in here
         return databits_with_preamble
 
     def bits_to_samples(self, databits_with_preamble):
@@ -55,7 +56,7 @@ class Transmitter:
         print '\tNumber of samples being sent:', len(modulated_samples)
 
         cut_off = 4 * math.pi * self.fc / self.samplerate
-        return common.lpfilter(modulated_samples, cutoff)
+        return common.lpfilter(modulated_samples, cut_off)
 
 
         
