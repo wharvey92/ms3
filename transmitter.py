@@ -41,7 +41,6 @@ class Transmitter:
         Output should be an array of samples.
         '''
         samples = [self.one if (x == 1) else 0 for x in databits_with_preamble]
-
         return samples
         
     def modulate(self, samples):
@@ -49,15 +48,17 @@ class Transmitter:
         Multiply samples by a local sinusoid carrier of the same length.
         Return the multiplied result.
         '''
+        #Get modulated samples
+        modulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
 
         print samples
 
 
         
         # fill in your implementation
-        print '\tNumber of samples being sent:', # fill in here
+        print '\tNumber of samples being sent:', len(modulated_samples)
 
-        return mod_samples
+        return common.lpfilter(modulated_samples, self.fc)
 
 
         
