@@ -1,7 +1,7 @@
 import math
 import common_txrx as common
 import numpy as np
-import matplotlib.pyplot as p
+#import matplotlib.pyplot as p
 
 import hamming_db
 import channel_coding as cc
@@ -69,9 +69,6 @@ class Transmitter:
 
 
         filtered = common.lpfilter(modulated_samples, cut_off)
-
-        p.plot(samples)
-        p.plot(filtered)
 
         return filtered
 

@@ -2,7 +2,7 @@ import sys
 import math
 import cmath
 import numpy as np
-import matplotlib.pyplot as p
+#import matplotlib.pyplot as p
 import scipy.cluster.vq
 import common_txrx as common
 from graphs import *
