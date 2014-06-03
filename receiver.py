@@ -52,8 +52,6 @@ class Receiver:
         First, find the first sample index where you detect energy based on the
         moving average method described in the milestone 2 description.
         '''
-        #testing remove
-        return 51200
 
         energy_offset = 0
         while(True):
@@ -93,14 +91,32 @@ class Receiver:
         samples is the highest. 
         '''        
         preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
-        energy_samples = demod_samples[energy_offset:energy_offset+ 3 * len(preambleBits)]
+        preambleSamples = np.array([])
+        for x in preambleBits:
+            toAdd = one
+            if x == 0:
+                toAdd = 0
+            for i in xrange(self.spb):
+                preambleSamples = np.append(preambleSamples, toAdd)
+
+
+
+        energy_samples = demod_samples[energy_offset:energy_offset+ 3 * len(preambleSamples)]
+
         max_idx = 0
         max_val = 0
-        for i in xrange(len(energy_samples - len(preambleBits) - 1)):
-            corr_val = np.correlate(preambleBits, energy_samples[i:i+len(preambleBits)])
-            if corr_val[0] > max_val:
-                max_val = corr_val[0]
+        i = 0
+        while (True):
+            
+            corr_val = np.correlate(preambleSamples, energy_samples[i:i+len(preambleBits)])[0]
+
+            if corr_val > max_val:
+                max_val = corr_val
                 max_idx = i
+
+            i += 1
+            if i >= len(energy_samples) - len(preambleSamples):
+                break
         pre_offset = max_idx
 
         '''
@@ -108,6 +124,10 @@ class Receiver:
         (not a absolute index reference by [0]). 
         Note that the final return value is [offset + pre_offset]
         '''
+
+        print "offset ", offset
+        print "pre_offset ", pre_offset
+        print "TOTAL OFFSET: ", offset + pre_offset
 
         return offset + pre_offset
         
