@@ -1,6 +1,7 @@
 import math
 import common_txrx as common
 import numpy as np
+import matplotlib.pyplot as p
 
 import hamming_db
 import channel_coding as cc
@@ -64,7 +65,15 @@ class Transmitter:
         print '\tNumber of samples being sent:', len(modulated_samples)
 
         cut_off = 4 * math.pi * self.fc / self.samplerate
-        return common.lpfilter(modulated_samples, cut_off)
+
+
+
+        filtered = common.lpfilter(modulated_samples, cut_off)
+
+        p.plot(samples)
+        p.plot(filtered)
+
+        return filtered
 
 
         

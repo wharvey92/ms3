@@ -1,5 +1,6 @@
 import sys
 import math
+import cmath
 import numpy as np
 import matplotlib.pyplot as p
 import scipy.cluster.vq
@@ -237,19 +238,23 @@ class Receiver:
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
-        
-        sin_demodulated_samples = [(samples[i] * math.sin(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
+        expval = (0 + 1j) * 2 * math.pi * self.fc / self.samplerate
+        exp_samples = [np.exp(expval * n) * samples[n] for n in xrange(len(samples))]
+
+        # sin_demodulated_samples = [(samples[i] * math.sin(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
+        # cut_off = math.pi * self.fc / self.samplerate
+        # sinOutput = common.lpfilter(sin_demodulated_samples, cut_off)
+
+        # cos_demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         cut_off = math.pi * self.fc / self.samplerate
-        sinOutput = common.lpfilter(sin_demodulated_samples, cut_off)
+        output = common.lpfilter(exp_samples, cut_off)
+        abs_output = [abs(x) for x in output]
+        # w = (sinOutput ** 2) + (cosOutput ** 2)
+        # w = np.sqrt(w)
 
-        cos_demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
-        cut_off = math.pi * self.fc / self.samplerate
-        cosOutput = common.lpfilter(cos_demodulated_samples, cut_off)
-
-        w = (sinOutput ** 2) + (cosOutput ** 2)
-        w = np.sqrt(w)
-
-        return w
+        p.plot(abs_output)
+        p.show()
+        return abs_output
 
     def decode(self, recd_bits):
         return cc.get_databits(recd_bits)

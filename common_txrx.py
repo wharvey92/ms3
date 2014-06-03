@@ -5,7 +5,7 @@ import operator
 import binascii
 # Methods common to both the transmitter and receiver.
 
-k_limit = 2
+k_limit = 50
 
 def reverse_np_array(arr):
 	return arr[::-1]

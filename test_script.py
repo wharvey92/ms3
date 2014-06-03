@@ -1,17 +1,26 @@
 import numpy as np
 
 
-one = 4
-spb = 3
+k_limit = 2
 
-databits_with_preamble = [1, 0, 0, 0, 0, 1, 1, 1]
+def reverse_np_array(arr):
+	return arr[::-1]
 
-samples = np.array([])
-for x in databits_with_preamble:
-	toAdd = one
-	if x == 0:
-		toAdd = 0
-	for i in xrange(spb):
-		samples = np.append(samples, toAdd)
+def perform_convolution(x, h):
+	y = np.array([])
+	rev_h = reverse_np_array(h)
 
-print samples
+	for n in xrange(len(x)):
+		x_n_rev = [0 if (i < 0 or i >= len(x)) else x[i] for i in xrange(n - k_limit, n + k_limit + 1)]
+		x_n = reverse_np_array(x_n_rev)
+
+		print x_n
+		print h
+		print
+
+		y = np.append(y, np.dot(x_n, h))
+	return y
+
+
+
+print perform_convolution([1, 2, 3, 4, 5, 6], [-1, -2, 3, 1, 2])
