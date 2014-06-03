@@ -57,8 +57,6 @@ class Transmitter:
         Return the multiplied result.
         '''
 
-        exit("modulating!!!")
-
         #Get modulated samples
         modulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         

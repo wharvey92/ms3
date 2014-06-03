@@ -233,20 +233,23 @@ class Receiver:
         # Fill in your implementation
 
     def demodulate(self, samples):
-        '''
+        ''' 
         Perform quadrature modulation.
         Return the demodulated samples.
         '''
-        exit("demodulating !!!")
-
-        demodulated_samples = [(samples[i] * math.exp(1j * 2 * math.pi * i * self.fc/self.samplerate)) for i in xrange(len(samples))]
-
-        #demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
+        
+        sin_demodulated_samples = [(samples[i] * math.sin(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
         cut_off = math.pi * self.fc / self.samplerate
+        sinOutput = common.lpfilter(sin_demodulated_samples, cut_off)
 
+        cos_demodulated_samples = [(samples[i] * math.cos(2 * math.pi * self.fc/self.samplerate * i)) for i in xrange(len(samples))]
+        cut_off = math.pi * self.fc / self.samplerate
+        cosOutput = common.lpfilter(cos_demodulated_samples, cut_off)
 
+        w = (sinOutput ** 2) + (cosOutput ** 2)
+        w = np.sqrt(w)
 
-        return common.lpfilter(demodulated_samples, cut_off)
+        return w
 
     def decode(self, recd_bits):
         return cc.get_databits(recd_bits)

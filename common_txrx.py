@@ -40,6 +40,6 @@ def lpfilter(samples_in, omega_cut):
     # fill in your implementation
 
     lpfilter_vec = getlpfilter_vector(omega_cut)
-    samples_out = 2 * perform_convolution(samples_in, lpfilter_vec)
+    samples_out = perform_convolution(samples_in, lpfilter_vec)
 
     return np.array(samples_out)
