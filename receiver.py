@@ -51,6 +51,7 @@ class Receiver:
         moving average method described in the milestone 2 description.
         '''
 
+
         energy_offset = 0
         while(True):
             currSamples = demod_samples[energy_offset: energy_offset + self.spb]
@@ -88,9 +89,9 @@ class Receiver:
         the cross-correlation between the signal samples and the preamble 
         samples is the highest. 
         '''        
-        preambleBits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
+        original_preamble_bits = [1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1]
         preambleSamples = np.array([])
-        for x in preambleBits:
+        for x in original_preamble_bits:
             toAdd = one
             if x == 0:
                 toAdd = 0
@@ -98,17 +99,24 @@ class Receiver:
                 preambleSamples = np.append(preambleSamples, toAdd)
 
 
-
-        energy_samples = demod_samples[energy_offset:energy_offset+ 3 * len(preambleSamples)]
+        energy_samples = demod_samples[energy_offset:energy_offset + 3 * len(preambleSamples)]
 
         max_idx = 0
         max_val = 0
         i = 0
         while (True):
             
-            corr_val = np.correlate(preambleSamples, energy_samples[i:i+len(preambleBits)])[0]
+            potential_sample = energy_samples[i:i+len(preambleSamples)]
+
+            corr_val = np.dot(preambleSamples, potential_sample)/np.linalg.norm(potential_sample)
+
+            #print corr_val - np.dot(potential_sample, preambleSamples)
+            #print
+
+
 
             if corr_val > max_val:
+                
                 max_val = corr_val
                 max_idx = i
 
@@ -122,11 +130,6 @@ class Receiver:
         (not a absolute index reference by [0]). 
         Note that the final return value is [offset + pre_offset]
         '''
-
-        print "offset ", offset
-        print "pre_offset ", pre_offset
-        print "TOTAL OFFSET: ", offset + pre_offset
-
         return offset + pre_offset
         
 
@@ -216,6 +219,8 @@ class Receiver:
             samplesToAvg = currSamples[middleIndex - (self.spb / 4): middleIndex + (self.spb / 4)]
             samplesToAvg = np.array(samplesToAvg)
 
+            if len(samplesToAvg) == 0:
+                break
             avg = np.average(samplesToAvg)
             if (avg > thresh):
                 data_bits.append(1)
@@ -252,8 +257,7 @@ class Receiver:
         # w = (sinOutput ** 2) + (cosOutput ** 2)
         # w = np.sqrt(w)
 
-        p.plot(abs_output)
-        p.show()
+        #p.show()
         return abs_output
 
     def decode(self, recd_bits):
