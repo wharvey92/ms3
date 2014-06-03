@@ -33,13 +33,10 @@ class Receiver:
         Use kmeans clustering with the demodulated samples
         '''
 
-        return 1, 0, 0.5
-
-        centroids = scipy.cluster.vq.kmeans(np.array(demod_samples), 2)
-        one = max(centroids[0])
-        zero = min(centroids[0])
+        clusters, centroids = self.kmeans_clustering(np.array(demod_samples), 2)
+        one = max(centroids)
+        zero = min(centroids)
         thresh = 1.0 * (one + zero) / 2
-        thresh = (one + zero) * 1.0 / 2
         return one, zero, thresh
  
     def detect_preamble(self, demod_samples, thresh, one):
